@@ -17,6 +17,40 @@ class RandomWordsState extends State<RandomWords>{
   final _suggestions = <WordPair>[];
   final Set<WordPair> _saved = Set<WordPair>(); //A set is better than a list as it will not allow duplicate entries!
   final _biggerFont = const TextStyle(fontSize: 18.0);
+  void _pushSaved(){
+    //On the list button press we need to push a "route" (new page) to the navigators stack for the change of screen as we desire
+    Navigator.of(context).push(
+        MaterialPageRoute<void>(
+          builder: (BuildContext context) {
+            final Iterable<ListTile> tiles = _saved.map(
+              (WordPair pair){
+                  return ListTile(
+                    title: Text(
+                      pair.asPascalCase,
+                      style: _biggerFont,
+                    ),
+                  );
+              },
+            );
+            //This will add horizontal spacing between each list tile
+            //With this, the final rows are contained in the divided variable, which we convert to a list with toList()
+            final List<Widget> divided = ListTile
+            .divideTiles(
+              context: context,
+              tiles: tiles,
+            )
+            .toList();
+            //The builder property will return a scaffold of the screen with an ap bar and a body containing a listview with each row
+            return Scaffold(
+              appBar: AppBar(
+                title: Text("Saved Suggestions"),
+              ),
+              body: ListView(children: divided),
+              );
+          },
+        ),
+    );
+  }
   Widget _buildSuggestions(){
     return ListView.builder(
       padding: const EdgeInsets.all(16.0),
@@ -66,6 +100,10 @@ class RandomWordsState extends State<RandomWords>{
     return Scaffold(
       appBar: AppBar(
         title: Text('Startup Name Generator'),
+        //Add a button to the app bar, which on pressed will nav to the next screen
+        actions: <Widget>[
+          IconButton(icon: Icon(Icons.list), onPressed: _pushSaved),
+        ],
       ),
       body: _buildSuggestions(),
     );
