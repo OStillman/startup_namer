@@ -36,11 +36,17 @@ class RandomWordsState extends State<RandomWords>{
     );
   }
   Widget _buildRow(WordPair pair){
+    final bool alreadySaved = _saved.contains(pair); //Check the word pairing has not already been added to favourites
     return ListTile(
       title: Text(
         pair.asPascalCase,
         style: _biggerFont,
-      )
+      ),
+      //Add the icons to the end of each row, with a filled heart for selected ones and unfilled for an awaiting selection one
+      trailing: Icon(
+        alreadySaved ? Icons.favorite : Icons.favorite_border,
+        color: alreadySaved ? Colors.red : null
+      ),
     );
   }
   @override
