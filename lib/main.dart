@@ -47,6 +47,18 @@ class RandomWordsState extends State<RandomWords>{
         alreadySaved ? Icons.favorite : Icons.favorite_border,
         color: alreadySaved ? Colors.red : null
       ),
+      onTap: (){
+        //Calling set state will trigger a call to build, triggering a UI refresh
+        //This allows a tap to add/remove from the _saved set set for the UI to then refresh and display this change
+        setState(() {
+         if(alreadySaved){
+           _saved.remove(pair);
+         } 
+         else{
+           _saved.add(pair);
+         }
+        });
+      },
     );
   }
   @override
