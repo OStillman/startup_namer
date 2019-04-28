@@ -1,45 +1,44 @@
 import 'package:flutter/material.dart';
+import 'package:english_words/english_words.dart';
 
-void main() => runApp(MyApp()); //Boiler plate to run the main widget builder
+void main() => runApp(MyApp());
 
-class MyApp extends StatelessWidget{
-  //Create our main Widget for the app, it's stateless so it can't be changed
+class MyApp extends StatelessWidget {
   @override
-  //Create the main build method
-  Widget build(BuildContext context){
+  Widget build(BuildContext context) {
     return MaterialApp(
-      title: "Testing 1,2",
+      title: 'Startup name generatorr',
       home: RandomWords(),
-      );
+    );
   }
-}
-
-//Stateful widget, allowing us to change aspects
-class RandomWords extends StatefulWidget{
-  @override
-  //Here we set the state controller
-  RandomWordsState createState() => RandomWordsState();
 }
 
 class RandomWordsState extends State<RandomWords>{
-  //This will control the state of the stateful widget
-  final _word = "Cheese";
+  final _suggestions = <WordPair>[];
+  final Set<WordPair> _saved = Set<WordPair>(); //A set is better than a list as it will not allow duplicate entries!
   final _biggerFont = const TextStyle(fontSize: 18.0);
-  Widget _buildCheese(){
+  Widget _buildSuggestions(){
     return ListView.builder(
-      //Helper method to create the listview
-        padding: const EdgeInsets.all(16.0),
-        itemBuilder: (context, i){
-           if (i.isOdd) return Divider(); //Divider is a helper to create a divider!
-           return _buildRow(_word); //We only have one word so once the odd/even is decided we want return our word
-        },
+      padding: const EdgeInsets.all(16.0),
+      itemBuilder: (context, i){
+        /*
+        This is called on each random word pair, it will place each suggestion onto a ListTile row, with even rows simply adding the word pairing
+        Odd rows will add a divider to visually seperate the entities
+        */
+        if(i.isOdd) return Divider(); //This adds a one pixel high divider widget before each row in the list
+
+        final index = i ~/2;  //THis divides i by 0 and returns an integer to calculate the actual number of words on in the list view minus the dividers
+        if(index >= _suggestions.length){
+          _suggestions.addAll(generateWordPairs().take(10)); //Once at the end of the word pairings, we need to generate 10 more and add them to the suggestions list
+        }
+        return _buildRow(_suggestions[index]);
+      },
     );
   }
-  //Take the built listview element, output it to a listtile
-  Widget _buildRow(String word){
+  Widget _buildRow(WordPair pair){
     return ListTile(
       title: Text(
-        word,
+        pair.asPascalCase,
         style: _biggerFont,
       )
     );
@@ -48,11 +47,15 @@ class RandomWordsState extends State<RandomWords>{
   Widget build(BuildContext context){
     return Scaffold(
       appBar: AppBar(
-          //Add our app bar title...
-          title: Text("Cheese Outputer"),
-        ),
-        body: _buildCheese(),
+        title: Text('Startup Name Generator'),
+      ),
+      body: _buildSuggestions(),
     );
   }
 }
 
+class RandomWords extends StatefulWidget{
+  @override
+  RandomWordsState createState() => RandomWordsState();
+
+}
